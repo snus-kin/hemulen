@@ -10,7 +10,7 @@ while manager.run != stopped:
     echo "Plugins Loaded: " & plist(manager).join(" ")
     break
 
-let cl = newDiscordClient("NzI3MTIwOTc4ODk4ODQ1NzIx.XvzrBg.3oEugsHmMowfwPIW-wVpqShHreo")
+let cl = newDiscordClient("")
 cl.debug = true
 
 # Now setup events
