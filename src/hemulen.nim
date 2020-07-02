@@ -4,7 +4,7 @@ import dimscord, asyncdispatch, plugins, os, strutils
 let token = getEnv("DISCORD_BOT_API_TOKEN")
 if token == "":
   stderr.writeLine("DISCORD_BOT_API_TOKEN Environment variable not set")
-  quit(0)
+  quit(1)
 
 # Setup plugins first
 const base = currentSourcePath.parentDir()
