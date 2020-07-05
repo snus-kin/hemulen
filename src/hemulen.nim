@@ -17,7 +17,6 @@ while manager.run != stopped:
     break
 
 let cl = newDiscordClient(token)
-cl.debug = true
 cl.autoreconnect = true
 
 # Now setup events
@@ -30,6 +29,7 @@ cl.events.message_create = proc (s: Shard, m: Message) =
   if m.content != "":
     let tokens = m.content.split(" ")
     var command = tokens[0]
+    command = command.toLower()
     var parameters = tokens[1..len(tokens)-1]
     
     if command == "!help":
