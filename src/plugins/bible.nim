@@ -8,8 +8,7 @@ proc bible(plugin: Plugin, cmd: CmdData) {.plugincallback.} =
   else:
     let client = newHttpClient()
     try:
-      let resp = client.getContent("https://bible-api.com/" & cmd.params.join("+")).parseJson
-      echo "https://bible-api.com/" & cmd.params.join("%20") & "?translation=kjv"
+      let resp = client.getContent("https://bible-api.com/" & cmd.params.join("+") & "?translation=kjv").parseJson
       client.close()
 
       let text = "> " & resp["text"].getStr
