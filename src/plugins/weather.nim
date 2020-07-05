@@ -3,7 +3,7 @@ import strutils, httpclient
 
 proc weather(plugin: Plugin, cmd: CmdData) {.plugincallback.} =
   if len(cmd.params) == 0:
-    cmd.returned.add "Specify a location. Commands available: `weather, sunrise, moon`"
+    cmd.returned.add "Specify a location. Commands available: `weather, sunrise, moon, weatherimage`"
   else:
     let client = newHttpClient(userAgent="curl")
     let weather = client.getContent("https://wttr.in/" & cmd.params.join(" ") & "?format=3")
@@ -12,7 +12,7 @@ proc weather(plugin: Plugin, cmd: CmdData) {.plugincallback.} =
 
 proc sunrise(plugin: Plugin, cmd: CmdData) {.plugincallback.} =
   if len(cmd.params) == 0:
-    cmd.returned.add "Specify a location. Commands available: `weather, sunrise, moon`"
+    cmd.returned.add "Specify a location. Commands available: `weather, sunrise, moon, weatherimage`"
   else:
     let client = newHttpClient(userAgent="curl")
     let weather = client.getContent("https://wttr.in/" & cmd.params.join(" ") & "?format=%l:+%S+%s")
@@ -20,15 +20,18 @@ proc sunrise(plugin: Plugin, cmd: CmdData) {.plugincallback.} =
     cmd.returned.add weather
 
 proc moon(plugin: Plugin, cmd: CmdData) {.plugincallback.} =
-  if len(cmd.params) == 0:
-    cmd.returned.add "Specify a location. Commands available: `weather, sunrise, moon`"
-  else:
-    let client = newHttpClient(userAgent="curl")
-    var weather = client.getContent("https://wttr.in/" & cmd.params.join(" ") & "?format=%l:+%m+%M")
-    client.close()
-    weather.removeSuffix
-    cmd.returned.add weather & " moon day(s)"
+  let client = newHttpClient(userAgent="curl")
+  var weather = client.getContent("https://wttr.in/" & cmd.params.join(" ") & "?format=%m+%M")
+  client.close()
+  weather.removeSuffix
+  cmd.returned.add weather & " moon day(s)"
 
+proc weatherimage(plugin: Plugin, cmd: CmdData) {.plugincallback.} =
+  if len(cmd.params) == 0:
+    cmd.returned.add "Specify a location. Commands available: `weather, sunrise, moon, weatherimage`"
+  else:
+    let weather = "https://wttr.in/" & cmd.params.join(" ") & "_tQpu0.png"
+    cmd.returned.add weather
 
 pluginLoad:
   discard
