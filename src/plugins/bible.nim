@@ -4,17 +4,17 @@ import strutils, httpclient, json
 
 proc bible(plugin: Plugin, cmd: CmdData) {.plugincallback.} =
   if len(cmd.params) == 0:
-    cmd.returned.add "Usage: https://bible-api.com/BOOK+CHAPTER:VERSE"
+    cmd.returned.add "Usage: book chapter:verse"
   else:
     let client = newHttpClient()
     try:
       let resp = client.getContent("https://bible-api.com/" & cmd.params.join("+") & "?translation=kjv").parseJson
       client.close()
 
-      let text = "> " & resp["text"].getStr
+      let text = ">>> " & resp["text"].getStr
       cmd.returned.add text
     except HttpRequestError:
-      cmd.returned.add "Usage: https://bible-api.com/BOOK+CHAPTER:VERSE"
+      cmd.returned.add "Usage: book chapter:verse"
     except JsonParsingError:
       cmd.returned.add "Server returned malformed response"
 
