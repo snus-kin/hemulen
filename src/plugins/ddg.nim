@@ -23,6 +23,8 @@ proc ddg(plugin: Plugin, cmd: CmdData) {.plugincallback.} =
   else:
     cmd.returned.add "No results found"
 
+  client.close()
+
 
 pluginLoad:
   discard
