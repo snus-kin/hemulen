@@ -18,6 +18,7 @@ while manager.run != stopped:
 
 let cl = newDiscordClient(token)
 cl.debug = true
+cl.autoreconnect = true
 
 # Now setup events
 cl.events.on_ready = proc (s: Shard, r: Ready) =
@@ -31,18 +32,17 @@ cl.events.message_create = proc (s: Shard, m: Message) =
     var command = tokens[0]
     var parameters = tokens[1..len(tokens)-1]
     
-    if command == "!help" or command == "!plist":
+    if command == "!help":
       # This command is special as it does not use a plugin, meta-command
       let pluginList = plist(manager).join(", ")
-      discard waitFor cl.api.sendMessage(m.channel_id, "**Available commands**: " & pluginList)
+      discard cl.api.sendMessage(m.channel_id, "**Available commands**: " & pluginList)
     elif command.startsWith('!'):
       command.removePrefix('!')
       let cmd = newCmdData(parameters.join(" "))
       try:
         call(manager, command, cmd)
-        discard waitFor cl.api.sendMessage(m.channel_id, cmd.returned[0])
-      except IndexError:
+        discard cl.api.sendMessage(m.channel_id, cmd.returned.join(" "))
+      except:
         discard
-
 
 waitFor cl.startSession()
