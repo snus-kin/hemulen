@@ -6,11 +6,10 @@ proc bible(plugin: Plugin, cmd: CmdData) {.plugincallback.} =
   if len(cmd.params) == 0:
     cmd.returned.add "Usage: book chapter:verse"
   else:
-    let client = newHttpClient()
     try:
+      let client = newHttpClient()
       let resp = client.getContent("https://bible-api.com/" & cmd.params.join("+") & "?translation=kjv").parseJson
       client.close()
-
       let text = ">>> " & resp["text"].getStr
       cmd.returned.add text
     except HttpRequestError:

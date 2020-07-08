@@ -6,32 +6,42 @@ proc weather(plugin: Plugin, cmd: CmdData) {.plugincallback.} =
     cmd.returned.add "Specify a location. Commands available: `weather, sunrise, moon, weatherimage`"
   else:
     let client = newHttpClient(userAgent="curl")
-    let weather = client.getContent("https://wttr.in/" & cmd.params.join(" ") & "?format=3")
+    try:
+      let weather = client.getContent("https://wttr.in/" & cmd.params.join(" ") & "?format=3")
+      cmd.returned.add weather
+    except:
+      cmd.returned.add "Error retrieving weather"
     client.close()
-    cmd.returned.add weather
 
 proc sunrise(plugin: Plugin, cmd: CmdData) {.plugincallback.} =
   if len(cmd.params) == 0:
     cmd.returned.add "Specify a location. Commands available: `weather, sunrise, moon, weatherimage`"
   else:
     let client = newHttpClient(userAgent="curl")
-    let weather = client.getContent("https://wttr.in/" & cmd.params.join(" ") & "?format=%l:+%S+%s")
+    try:
+      let weather = client.getContent("https://wttr.in/" & cmd.params.join(" ") & "?format=%l:+%S+%s")
+      cmd.returned.add weather
+    except:
+      cmd.returned.add "Error retrieving weather"
+
     client.close()
-    cmd.returned.add weather
 
 proc moon(plugin: Plugin, cmd: CmdData) {.plugincallback.} =
   let client = newHttpClient(userAgent="curl")
-  var weather = client.getContent("https://wttr.in/" & cmd.params.join(" ") & "?format=%m+%M")
+  try:
+    var weather = client.getContent("https://wttr.in/" & cmd.params.join(" ") & "?format=%m+%M")
+    weather.removeSuffix
+    cmd.returned.add weather & " moon day(s)"
+  except:
+    cmd.returned.add "Error retrieving weather"
   client.close()
-  weather.removeSuffix
-  cmd.returned.add weather & " moon day(s)"
 
-proc weatherimage(plugin: Plugin, cmd: CmdData) {.plugincallback.} =
-  if len(cmd.params) == 0:
-    cmd.returned.add "Specify a location. Commands available: `weather, sunrise, moon, weatherimage`"
-  else:
-    let weather = "https://wttr.in/" & cmd.params.join(" ") & "_tQpu0.png"
-    cmd.returned.add weather
+#proc weatherimage(plugin: Plugin, cmd: CmdData) {.plugincallback.} =
+#  if len(cmd.params) == 0:
+#    cmd.returned.add "Specify a location. Commands available: `weather, sunrise, moon, weatherimage`"
+#  else:
+#    let weather = "https://wttr.in/" & cmd.params.join(" ") & "_Q0pu.png"
+#    cmd.returned.add weather
 
 pluginLoad:
   discard
