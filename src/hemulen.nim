@@ -35,13 +35,13 @@ cl.events.message_create = proc (s: Shard, m: Message) =
     if command == "!help":
       # This command is special as it does not use a plugin, meta-command
       let pluginList = plist(manager).join(", ")
-      discard cl.api.sendMessage(m.channel_id, "**Available commands**: `" & pluginList & "`")
+      asyncCheck cl.api.sendMessage(m.channel_id, "**Available commands**: `" & pluginList & "`")
     elif command.startsWith('!'):
       command.removePrefix('!')
       let cmd = newCmdData(parameters.join(" "))
       try:
         call(manager, command, cmd)
-        discard cl.api.sendMessage(m.channel_id, cmd.returned.join(" "))
+        asyncCheck cl.api.sendMessage(m.channel_id, cmd.returned.join(" "))
       except:
         discard
 
